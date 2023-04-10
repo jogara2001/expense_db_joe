@@ -8,3 +8,5 @@ data such as price, time/date, item, and category. Other data could include user
 such as spending limits, income, goals, etc. With all this data, a relational database 
 seems justified as it will allow us to manage many different scopes of data. 
 
+contributers: jogara@calpoly.edu
+
