@@ -1,5 +1,5 @@
 
-User Stories:
+## User Stories:
 
 - As a customer, I want to be able to add a purchase to the database, so that I can access it later
 - As a customer, I want to be able to get a past purchase and associated data, so that I can read detailed information for each purchase
@@ -7,7 +7,7 @@ User Stories:
 - As a customer, I want to be able to set a budget over a week, so that I can set spending goals
 - As a customer, I want to be able to compare my spending to my budget, so that I can track my progress towards my goals
 
-Endpoints:
+## Endpoints:
 
 `get_purchase_information(expense_id: int)`
 
@@ -62,7 +62,7 @@ This endpoint adds a new expense to the database. This expense includes some req
 - `category`: the user defined category of the item (not required)
 - `description`: the user defined description of the item (not required)
 
-Edge Cases and Transaction Flow:
+## Edge Cases and Transaction Flow:
 
 - Users should be required to include minimum data
   - If users don’t include required fields in an API called an error message should be returned
