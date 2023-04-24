@@ -9,7 +9,7 @@
 
 ## Endpoints:
 
-###Get expense
+### Get expense
 `GET: /user/{user_id}/expense/{expense_id}`
 
 This endpoint returns the information associated with an expense by its identifier. For each expense it returns:
@@ -20,7 +20,7 @@ This endpoint returns the information associated with an expense by its identifi
 - `category`: the user defined category of the item
 - `description`: the user defined description of the item
 
-###Get expenses over time
+### Get expenses over time
 `GET: /user/{user_id}/expenses/`
 
 This endpoint returns the information associated with expenses over a defined time period. By default, the difference between `start_time` and `end_time` is one week and `end_time` is today. For each expense, it returns:
@@ -31,7 +31,7 @@ This endpoint returns the information associated with expenses over a defined ti
 - `category`: the user-defined category of the item
 - `over_budget`: a boolean determining whether the provided expense went over its associated budget
 
-###Get Budget
+### Get Budget
 `GET: /user/{user_id}/budget/{category_id}`
 
 This endpoint returns the user's budget information. By default, it will return all the user's budget information for all categories.
@@ -47,7 +47,7 @@ Each expense is represented by a dictionary with the following keys:
 - `item`: the item associated with the expense
 - `date`: the date of the expense
 
-###Set Budget
+### Set Budget
 `POST: /user/{user_id}/budget/{category}/`
 
 This endpoint adds or updates a category with a budget. It takes as input:
@@ -56,7 +56,7 @@ This endpoint adds or updates a category with a budget. It takes as input:
 - `category`: the user generated category to be created/updated
 - `budget`: the dollar amount of the budget
 
-###Add Expense
+### Add Expense
 `POST: /user/{user_id}/expense/`
 
 This endpoint adds a new expense to the database. This expense includes some required data and some optional data:
