@@ -29,7 +29,7 @@ This endpoint returns the information associated with expenses over a defined ti
 - `date`: the date of the expense
 - `expense_id`: the ID of the item associated with the expense
 - `category`: the user-defined category of the item
-- `over_budget`: a boolean determining whether the provided expense went over its associated budget
+- `budget_delta`: a number showing the difference between current money spent in the category and the budget in place
 
 ### Get Budget
 `GET: /user/{user_id}/budget/{category_id}`
@@ -39,7 +39,7 @@ This endpoint returns the user's budget information. By default, it will return 
 - `category`: the user-defined name of a specific category
 - `budget`: the budget associated with the category
 - `expenses`: the expenses associated with each category
-- `under_budget`: a boolean stating whether the sum of expenses associated with the category has exceeded the budget
+- `budget_delta`: a number showing the difference between current money spent in the category and the budget in place
 
 Each expense is represented by a dictionary with the following keys:
 
