@@ -14,7 +14,7 @@
 
 This endpoint returns the information associated with an expense by its identifier. For each expense it returns:
 
-- `price`: the monetary value of the expense, in Dollars
+- `cost`: the monetary value of the expense, in Dollars
 - `date`: the date of the expense
 - `expense_id`: the ID of the item associated with the expense
 - `category`: the user defined category of the item
@@ -25,7 +25,7 @@ This endpoint returns the information associated with an expense by its identifi
 
 This endpoint returns the information associated with expenses over a defined time period. By default, the difference between `start_time` and `end_time` is one week and `end_time` is today. For each expense, it returns:
 
-- `price`: the monetary value of the expense, in dollars
+- `cost`: the monetary value of the expense, in dollars
 - `date`: the date of the expense
 - `expense_id`: the ID of the item associated with the expense
 - `category`: the user-defined category of the item
