@@ -107,10 +107,10 @@ def set_budget(user_id: int, budget_category: str, budget: BudgetJson):
     - `budget`: the dollar amount of the budget
     """
     with db.engine.connect() as conn:
-        check_user_exists(user_id)
+        user = get_user(user_id)
         category_result = conn.execute(
             sqlalchemy.text("SELECT * FROM budget_category WHERE user_id = :user_id AND category_name = :category_name"),
-            [{"user_id": user_id, "category_name": budget_category}]
+            [{"user_id": user[0], "category_name": budget_category}]
         ).fetchone()
         if category_result is None:
             current_max_row_id = conn.execute(
@@ -119,12 +119,12 @@ def set_budget(user_id: int, budget_category: str, budget: BudgetJson):
             max_row_id = 0 if current_max_row_id is None else current_max_row_id[0] + 1
             conn.execute(
                 sqlalchemy.text("INSERT INTO budget_category VALUES (:category_id, :category_name, :user_id, :monthly_budget)"),
-                [{"category_id": max_row_id, "category_name": budget_category, "user_id": user_id, "monthly_budget": budget.budget}]
+                [{"category_id": max_row_id, "category_name": budget_category, "user_id": user[0], "monthly_budget": budget.budget}]
             )
             return {
                 "category_id": max_row_id,
                 "category_name": budget_category,
-                "user_id": user_id,
+                "user_id": user[0],
                 "monthly_budget": budget.budget
             }
         else:
