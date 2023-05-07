@@ -6,7 +6,7 @@ from src import database as db
 
 router = APIRouter()
 
-def check_user_exists(user_id: int):
+def get_user(user_id: int):
     with db.engine.connect() as conn:
         user = conn.execute(
             sqlalchemy.text("SELECT * FROM user WHERE user_id = :user_id"),
@@ -14,8 +14,9 @@ def check_user_exists(user_id: int):
         ).fetchone()
         if user is None:
             raise HTTPException(status_code=404, detail="user not found.")
+    return user
 
-def check_category_exists(user_id: int, budget_category_id: int):
+def get_category(user_id: int, budget_category_id: int):
     with db.engine.connect() as conn:
         category_user = conn.execute(
             sqlalchemy.text("SELECT * FROM budget_category WHERE user_id = :user_id AND category_id = :category_id"),
@@ -23,6 +24,7 @@ def check_category_exists(user_id: int, budget_category_id: int):
         ).fetchone()
         if category_user is None:
             raise HTTPException(status_code=404, detail="budget category not found.")
+    return category_user 
 
 @router.get("/user/{user_id}/budget/", tags=["expenses"])
 def get_budget(user_id: int, budget_category_id: int):
@@ -43,12 +45,12 @@ def get_budget(user_id: int, budget_category_id: int):
     """
     data = []
     with db.engine.connect() as conn:
-        check_user_exists(user_id)
+        user = get_user(user_id)
         if budget_category_id:
-            check_category_exists(user_id, budget_category_id)
+            category_user = get_category(user[0], budget_category_id)
             expenses = conn.execute(
                 sqlalchemy.text("SELECT * FROM expense WHERE user_id = :user_id AND category_id = :category_id"),
-                [{"user_id": user_id, "category_id": budget_category_id}]
+                [{"user_id": user[0], "category_id": budget_category_id}]
             ).fetchall()
             expenses_list = []
             for expense in expenses:
@@ -67,12 +69,12 @@ def get_budget(user_id: int, budget_category_id: int):
         else:
             categories_user = conn.execute(
                 sqlalchemy.text("SELECT * FROM budget_category WHERE user_id = :user_id"),
-                [{"user_id": user_id}]
+                [{"user_id": user[0]}]
             ).fetchall()
             for category_user in categories_user:
                 expenses = conn.execute(
                     sqlalchemy.text("SELECT * FROM expense WHERE user_id = :user_id AND category_id = :category_id"),
-                    [{"user_id": user_id, "category_id": category_user[0]}]
+                    [{"user_id": user[0], "category_id": category_user[0]}]
                 ).fetchall()
                 expenses_list = []
                 for expense in expenses:
