@@ -43,7 +43,7 @@ This endpoint returns the user's budget information. By default, it will return 
 
 Each expense is represented by a dictionary with the following keys:
 
-- `price`: the monetary value of the expense, in dollars
+- `cost`: the monetary value of the expense, in dollars
 - `item`: the item associated with the expense
 - `date`: the date of the expense
 
@@ -62,7 +62,7 @@ This endpoint adds or updates a category with a budget. It takes as input:
 This endpoint adds a new expense to the database. This expense includes some required data and some optional data:
 
 - `user`: the user who is adding the expense (required)
-- `price`: the monetary value of the expense, in Dollars (required)
+- `cost`: the monetary value of the expense, in Dollars (required)
 - `date`: the date of the expense (required)
 - `category`: the user defined category of the item (not required)
 - `description`: the user defined description of the item (not required)
