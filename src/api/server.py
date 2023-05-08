@@ -1,6 +1,5 @@
 from fastapi import FastAPI
-from src.api import users
-from src.api import budget
+from src.api import budget, users
 
 description = ""
 
