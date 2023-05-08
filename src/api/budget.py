@@ -10,7 +10,7 @@ router = APIRouter()
 def get_user(user_id: int):
     with db.engine.connect() as conn:
         user = conn.execute(
-            sqlalchemy.text("SELECT * FROM user WHERE user_id = :user_id"),
+            sqlalchemy.text('SELECT * FROM "user" WHERE user_id = :user_id'),
             [{"user_id": user_id}]
         ).fetchone()
         if user is None:
@@ -34,8 +34,8 @@ def get_category(user_id: int, budget_category_id: int):
     return category_user
 
 
-@router.get("/user/{user_id}/budget/", tags=["expenses"])
-def get_budget(user_id: int, budget_category_id: int):
+@router.get("/users/{user_id}/budget/", tags=["expenses"])
+def get_budget(user_id: int, budget_category_id: int = None):
     """
     This endpoint returns the user's budget information.
     By default, it will return all the user's budget information for all categories.
@@ -60,8 +60,7 @@ def get_budget(user_id: int, budget_category_id: int):
             expenses = conn.execute(
                 sqlalchemy.text('''
                 SELECT * FROM expense
-                WHERE user_id = :user_id
-                AND category_id = :category_id
+                WHERE category_id = :category_id
                 '''),
                 [{"user_id": user[0], "category_id": budget_category_id}]
             ).fetchall()
@@ -74,7 +73,7 @@ def get_budget(user_id: int, budget_category_id: int):
                     "item": description
                 })
             data.append({
-                "budget_category": category_user[1],
+                "budget_category": category_user[2],
                 "budget": category_user[3],
                 "expenses": expenses_list,
                 "budget_delta": category_user[3] - sum(
@@ -91,8 +90,7 @@ def get_budget(user_id: int, budget_category_id: int):
                 expenses = conn.execute(
                     sqlalchemy.text('''
                     SELECT * FROM expense
-                    WHERE user_id = :user_id
-                    AND category_id = :category_id
+                    WHERE category_id = :category_id
                     '''),
                     [{"user_id": user[0], "category_id": category_user[0]}]
                 ).fetchall()
@@ -105,7 +103,7 @@ def get_budget(user_id: int, budget_category_id: int):
                         "item": description
                     })
                 data.append({
-                    "budget_category": category_user[1],
+                    "budget_category": category_user[2],
                     "budget": category_user[3],
                     "expenses": expenses_list,
                     "budget_delta": category_user[3] - sum(
@@ -119,7 +117,7 @@ class BudgetJson(BaseModel):
     budget: float
 
 
-@router.post("/user/{user_id}/budget/{budget_category}/", tags=["movies"])
+@router.post("/users/{user_id}/budget/{budget_category}/", tags=["expenses"])
 def set_budget(user_id: int, budget_category: str, budget: BudgetJson):
     """
     This endpoint adds or updates a category with a budget. It takes as input:
@@ -139,36 +137,39 @@ def set_budget(user_id: int, budget_category: str, budget: BudgetJson):
             [{"user_id": user[0], "category_name": budget_category}]
         ).fetchone()
         if category_result is None:
-            current_max_row_id = conn.execute(
-                sqlalchemy.text("SELECT MAX(category_id) FROM budget_category")
-            ).fetchone()
-            max_row_id = 0 if current_max_row_id is None else current_max_row_id[0] + 1
-            conn.execute(
+            inserted_category = conn.execute(
                 sqlalchemy.text('''
                 INSERT INTO budget_category
-                VALUES (:category_id, :category_name, :user_id, :monthly_budget)
+                (category_name, user_id, monthly_budget)
+                VALUES (:category_name, :user_id, :monthly_budget)
+                RETURNING category_id
                 '''),
-                [{"category_id": max_row_id, "category_name": budget_category,
-                    "user_id": user[0], "monthly_budget": budget.budget}]
+                {"category_name": budget_category,
+                 "user_id": user_id, "monthly_budget": budget.budget}
             )
+            category_id = inserted_category.fetchone()[0]
+            conn.commit()
             return {
-                "category_id": max_row_id,
+                "category_id": category_id,
                 "category_name": budget_category,
                 "user_id": user[0],
                 "monthly_budget": budget.budget
             }
         else:
-            conn.execute(
+            updated_category = conn.execute(
                 sqlalchemy.text('''
                 UPDATE budget_category
                 SET monthly_budget = :monthly_budget
                 WHERE category_id = :category_id
+                RETURNING category_id
                 '''),
                 [{"monthly_budget": budget.budget, "category_id": category_result[0]}]
             )
+            category_id = updated_category.fetchone()[0]
+            conn.commit()
             return {
-                "category_id": category_result[0],
-                "category_name": category_result[1],
-                "user_id": category_result[2],
+                "category_id": category_id,
+                "category_name": budget_category,
+                "user_id": user[0],
                 "monthly_budget": budget.budget
             }
