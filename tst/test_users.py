@@ -18,9 +18,9 @@ def test_users_by_id():
     assert response.json() == {"user_id": 9, "name": "testing"}
 
 
-def test_users_by_id():
+def test_users_by_id2():
     response = client.get("/users/99999999999/")
-    assert response.status_code == 200
+    assert response.status_code == 404
     assert response.json() == {"detail": "user not found."}
 
 
