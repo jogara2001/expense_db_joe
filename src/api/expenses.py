@@ -22,7 +22,7 @@ def get_expense(user_id: int, expense_id: int):
     """
     user = utils.get_user(user_id)
     expense_id, _, date, cost, category_id, description = utils.get_expense(
-        user[0], expense_id)
+        expense_id)
     category = utils.get_category(user[0], category_id)
     return {
         "cost": cost,
@@ -46,12 +46,22 @@ def list_expenses(user_id: int):
     - `category`: the user-defined category of the item
     - `budget_delta`: a number showing the difference between current money spent in the category and the budget in place
     """
-    json = None
-
     with db.engine.connect() as conn:
-        result = conn.execute("")
-
-    return json
+        expenses = conn.execute(sqlalchemy.text('''
+            SELECT expense_id, category_id, date, cost, description
+            FROM expense;
+            ''')).fetchall()
+        return [
+            {
+                "expense_id": expense[0],
+                "cost": expense[1],
+                "date": expense[2],
+                "description": expense[3],
+                "category": expense[4],
+                "budget_delta": expense[5],
+            }
+            for expense in expenses
+        ]
 
 
 class ExpenseJson(BaseModel):
@@ -61,7 +71,7 @@ class ExpenseJson(BaseModel):
     description: str
 
 
-@router.post("/user/{user_id}/expense/", tags=["movies"])
+@router.post("/user/{user_id}/expense/", tags=["expenses"])
 def add_expense(user_id: int, expense: ExpenseJson):
     """
     This endpoint adds a new expense to the database.
@@ -73,11 +83,21 @@ def add_expense(user_id: int, expense: ExpenseJson):
     - `category`: the user defined category of the item (not required)
     - `description`: the user defined description of the item (not required)
     """
-    json = None
-
     with db.engine.connect() as conn:
-        result = conn.execute("")
-        if result is None:
-            raise HTTPException(status_code=404, detail="")
-
-    return json
+        inserted_expense = conn.execute(sqlalchemy.text('''
+            INSERT INTO expense (category_id, cost, description)
+            VALUES (:category_id, :cost, :description)
+            RETURNING expense_id;
+            '''),
+                                        {"category_id": expense.category,
+                                         "cost": expense.cost,
+                                         "description": expense.description}
+                                        )
+        expense_id = inserted_expense.fetchone()[0]
+        conn.commit()
+    return {
+        "expense_id": expense_id,
+        "category_id": expense.category,
+        "cost": expense.cost,
+        "description": expense.description,
+    }

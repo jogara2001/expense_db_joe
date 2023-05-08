@@ -6,7 +6,7 @@ from src import database as db
 def get_user(user_id: int):
     with db.engine.connect() as conn:
         user = conn.execute(
-            sqlalchemy.text("SELECT * FROM user WHERE user_id = :user_id"),
+            sqlalchemy.text('SELECT * FROM "user" WHERE user_id = :user_id'),
             [{"user_id": user_id}]
         ).fetchone()
         if user is None:
@@ -14,12 +14,12 @@ def get_user(user_id: int):
     return user
 
 
-def get_expense(user_id: int, expense_id: int):
+def get_expense(expense_id: int):
     with db.engine.connect() as conn:
         expense = conn.execute(
             sqlalchemy.text(
-                "SELECT * FROM expense WHERE user_id = :user_id AND expense_id = :expense_id"),
-            [{"user_id": user_id, "expense_id": expense_id}]
+                "SELECT * FROM expense WHERE expense_id = :expense_id"),
+            [{"expense_id": expense_id}]
         ).fetchone()
         if expense is None:
             raise HTTPException(status_code=404, detail="expense not found.")
