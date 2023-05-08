@@ -7,7 +7,7 @@ from src import database as db
 router = APIRouter()
 
 
-@router.get("/user/", tags=["users"])
+@router.get("/users/", tags=["users"])
 def list_users():
     """
     This endpoint returns the information associated with all users.
@@ -28,7 +28,7 @@ def list_users():
       for user in users
     ]
 
-@router.get("/user/{user_id}/", tags=["users"])
+@router.get("/users/{user_id}/", tags=["users"])
 def get_user(user_id: int):
     """
     This endpoint returns the information associated with a user by its identifier.
@@ -52,7 +52,7 @@ def get_user(user_id: int):
 class UserJson(BaseModel):
     name: str
 
-@router.post("/user/", tags=["users"])
+@router.post("/users/", tags=["users"])
 def create_user(user: UserJson):
     """
     This endpoint creates a new user.
