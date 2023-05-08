@@ -7,6 +7,27 @@ from src import database as db
 router = APIRouter()
 
 
+@router.get("/user/", tags=["users"])
+def list_users():
+    """
+    This endpoint returns the information associated with all users.
+    For each user it returns:
+
+    - `user_id`: the ID of the user
+    - `name`: the name of the user
+    """
+    with db.engine.connect() as conn:
+      users = conn.execute(
+        sqlalchemy.text('SELECT * FROM "user"')
+      ).fetchall()
+    return [
+      {
+        "user_id": user[0],
+        "name": user[1],
+      }
+      for user in users
+    ]
+
 @router.get("/user/{user_id}/", tags=["users"])
 def get_user(user_id: int):
     """
@@ -18,7 +39,7 @@ def get_user(user_id: int):
     """
     with db.engine.connect() as conn:
       user = conn.execute(
-        sqlalchemy.text("SELECT * FROM user WHERE user_id = :user_id"),
+        sqlalchemy.text('SELECT * FROM "user" WHERE user_id = :user_id'),
         [{"user_id": user_id}]
       ).fetchone()
       if user is None:
@@ -41,15 +62,13 @@ def create_user(user: UserJson):
     Returns the user's ID and name if successful.
     """
     with db.engine.connect() as conn:
-      current_user_id = conn.execute(
-        sqlalchemy.text("SELECT MAX(user_id) FROM user")
-      ).fetchone()
-      current_user_id = 0 if current_user_id is None else current_user_id[0] + 1
-      conn.execute(
-        sqlalchemy.text("INSERT INTO user VALUES (:user_id, :name)"),
-        [{"user_id": current_user_id, "name": user.name}]
+      inserted_user = conn.execute(
+        sqlalchemy.text('INSERT INTO "user" (name) VALUES (:name) RETURNING user_id'),
+        [{"name": user.name}]
       )
+      user_id = inserted_user.fetchone()[0]
+      conn.commit()
     return {
+      "user_id": user_id,
       "user_name": user.name,
-      "user_id": current_user_id,
     }
