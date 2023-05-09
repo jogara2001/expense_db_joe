@@ -34,7 +34,10 @@ def test_set_budget_new():
     inputJson = {
         "budget": 100
     }
-    post_response = client.post(f"/users/{BUDGET_TEST_USER}/budget/NEW_BUDGET{num}/", json=inputJson)
+    post_response = client.post(
+        f"/users/{BUDGET_TEST_USER}/budget/NEW_BUDGET{num}/",
+        json=inputJson
+    )
     assert post_response.status_code == 200
 
     assert post_response.json()["category_name"] == f"NEW_BUDGET{num}"
@@ -47,7 +50,10 @@ def test_set_budget_update():
     inputJson = {
         "budget": budget
     }
-    post_response = client.post(f"/users/{BUDGET_TEST_USER}/budget/TestBudgetUpdate/", json=inputJson)
+    post_response = client.post(
+        f"/users/{BUDGET_TEST_USER}/budget/TestBudgetUpdate/",
+        json=inputJson
+    )
     assert post_response.status_code == 200
     assert post_response.json() == {
         "category_id": 5,

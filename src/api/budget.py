@@ -94,7 +94,8 @@ def get_budget(user_id: int, budget_category_id: int = None):
                     SELECT * FROM expense
                     WHERE category_id = :category_id
                     '''),
-                    [{"user_id": user.user_id, "category_id": category_user.category_id}]
+                    [{"user_id": user.user_id,
+                      "category_id": category_user.category_id}]
                 ).fetchall()
                 expenses_list = []
                 for expense in expenses:
@@ -166,7 +167,8 @@ def set_budget(user_id: int, budget_category: str, budget: BudgetJson):
                 WHERE category_id = :category_id
                 RETURNING category_id
                 '''),
-                [{"monthly_budget": budget.budget, "category_id": category_result.category_id}]
+                [{"monthly_budget": budget.budget,
+                  "category_id": category_result.category_id}]
             )
             category_id = updated_category.fetchone().category_id
             conn.commit()
