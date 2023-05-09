@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from src.api import budget, users
 
+
 description = ""
 
 tags_metadata = [
