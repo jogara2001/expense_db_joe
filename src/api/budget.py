@@ -1,37 +1,11 @@
 import sqlalchemy
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from pydantic import BaseModel
 
 from src import database as db
+from src.sql_utils import get_category, get_user
 
 router = APIRouter()
-
-
-def get_user(user_id: int):
-    with db.engine.connect() as conn:
-        user = conn.execute(
-            sqlalchemy.text('SELECT * FROM "user" WHERE user_id = :user_id'),
-            [{"user_id": user_id}]
-        ).fetchone()
-        if user is None:
-            raise HTTPException(status_code=404, detail="user not found.")
-    return user
-
-
-def get_category(user_id: int, budget_category_id: int):
-    with db.engine.connect() as conn:
-        category_user = conn.execute(
-            sqlalchemy.text('''
-            SELECT * FROM budget_category
-            WHERE user_id = :user_id
-            AND category_id = :category_id
-            '''),
-            [{"user_id": user_id, "category_id": budget_category_id}]
-        ).fetchone()
-        if category_user is None:
-            raise HTTPException(
-                status_code=404, detail="budget category not found.")
-    return category_user
 
 
 @router.get("/users/{user_id}/budget/", tags=["budgets"])
@@ -51,7 +25,7 @@ def get_budget(user_id: int, budget_category_id: int = None):
 
     - `cost`: the monetary value of the expense, in dollars
     - `item`: the item associated with the expense
-    - `date`: the date of the expense
+    - `date_time`: the date of the expense
     """
     data = []
     with db.engine.connect() as conn:
@@ -67,9 +41,9 @@ def get_budget(user_id: int, budget_category_id: int = None):
             ).fetchall()
             expenses_list = []
             for expense in expenses:
-                _, _, date, cost, _, description = expense
+                _, _, date_time, cost, description = expense
                 expenses_list.append({
-                    "date": date,
+                    "date_time": date_time,
                     "cost": cost,
                     "item": description
                 })
@@ -99,9 +73,9 @@ def get_budget(user_id: int, budget_category_id: int = None):
                 ).fetchall()
                 expenses_list = []
                 for expense in expenses:
-                    _, _, date, cost, _, description = expense
+                    _, _, date_time, cost, description = expense
                     expenses_list.append({
-                        "date": date,
+                        "date_time": date_time,
                         "cost": cost,
                         "item": description
                     })

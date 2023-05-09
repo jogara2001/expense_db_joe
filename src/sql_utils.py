@@ -26,13 +26,17 @@ def get_expense(expense_id: int):
     return expense
 
 
-def get_category(user_id: int, category_id: int):
+def get_category(user_id: int, budget_category_id: int):
     with db.engine.connect() as conn:
-        category = conn.execute(
-            sqlalchemy.text(
-                "SELECT * FROM category WHERE user_id = :user_id AND category_id = :category_id"),
-            [{"user_id": user_id, "category_id": category_id}]
+        category_user = conn.execute(
+            sqlalchemy.text('''
+            SELECT * FROM budget_category
+            WHERE user_id = :user_id
+            AND category_id = :category_id
+            '''),
+            [{"user_id": user_id, "category_id": budget_category_id}]
         ).fetchone()
-        if category is None:
-            raise HTTPException(status_code=404, detail="category not found.")
-    return category
+        if category_user is None:
+            raise HTTPException(
+                status_code=404, detail="budget category not found.")
+    return category_user

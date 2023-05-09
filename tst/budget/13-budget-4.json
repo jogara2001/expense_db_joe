@@ -3,7 +3,18 @@
     "budget_category_id": 4,
     "budget_category": "TestCategoryWithExpenses",
     "budget": 100,
-    "expenses": [],
-    "budget_delta": 100
+    "expenses": [
+      {
+        "date_time": "2023-05-09T02:42:59+00:00",
+        "cost": 50,
+        "item": "this is a test expense"
+      },
+      {
+        "date_time": "2023-05-09T02:42:59+00:00",
+        "cost": 45,
+        "item": "this is another test expense"
+      }
+    ],
+    "budget_delta": 5
   }
 ]
