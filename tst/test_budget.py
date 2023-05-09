@@ -19,7 +19,6 @@ def test_get_budget():
 
 
 def test_get_budget_with_expenses():
-    # TODO: Update this test with budget with expenses once expenses api is done
     response = client.get(f"/users/{BUDGET_TEST_USER}/budget/?budget_category_id=4")
     assert response.status_code == 200
 
