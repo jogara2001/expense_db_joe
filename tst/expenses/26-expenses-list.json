@@ -1,0 +1,16 @@
+[
+  {
+    "expense_id": 5,
+    "cost": 50.0,
+    "date_time": "2023-05-08T11:19:45+00:00",
+    "description": "string",
+    "category": "test-category"
+  },
+  {
+    "expense_id": 6,
+    "cost": 25.0,
+    "date_time": "2023-05-08T14:19:45+00:00",
+    "description": "string",
+    "category": "test-category"
+  }
+]
