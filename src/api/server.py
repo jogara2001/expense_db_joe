@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from src.api import users
+from src.api import budget, users
+
 
 description = ""
 
@@ -17,6 +18,7 @@ app = FastAPI(
     openapi_tags=tags_metadata,
 )
 app.include_router(users.router)
+app.include_router(budget.router)
 
 @app.get("/")
 async def root():
