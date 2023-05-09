@@ -1,0 +1,9 @@
+[
+  {
+    "budget_category_id": 3,
+    "budget_category": "TestCategory",
+    "budget": 100,
+    "expenses": [],
+    "budget_delta": 100
+  }
+]
