@@ -34,7 +34,7 @@ def test_list_expenses():
 
 
 def test_list_expenses_error():
-    response = client.get(f"/user/999999/expense/999999")
+    response = client.get("/user/999999/expense/999999")
     assert response.status_code == 404
     assert response.json() == {"detail": "user not found."}
 
