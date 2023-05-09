@@ -1,7 +1,7 @@
 import datetime
 
 import sqlalchemy
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from pydantic import BaseModel
 
 from src import database as db
@@ -41,10 +41,13 @@ def list_expenses(user_id: int,
                   start_date: str = (
                           datetime.datetime.utcnow() - datetime.timedelta(days=7)
                   ).strftime("%Y-%m-%d %H:%M:%S"),
-                  end_date: str = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")):
+                  end_date: str = datetime.datetime
+                  .utcnow().strftime("%Y-%m-%d %H:%M:%S")):
     """
-    This endpoint returns the information associated with expenses over a defined time period.
-    By default, the difference between `start_date` and `end_date` is one week and `end_time` is today.
+    This endpoint returns the information associated with expenses
+    over a defined time period.
+    By default, the difference between `start_date` and `end_date` is one week
+    and `end_time` is today.
     Expects format "YYYY-MM-DD HH:MM:SS" for timestamp
 
     For each expense, it returns:
@@ -58,7 +61,8 @@ def list_expenses(user_id: int,
     with db.engine.connect() as conn:
         expenses = conn.execute(sqlalchemy.text(
             '''
-            SELECT expense_id, budget_category.category_id, date_time, cost, description, category_name
+            SELECT expense_id, budget_category.category_id, 
+            date_time, cost, description, category_name
             FROM expense
             JOIN budget_category on budget_category.category_id = expense.category_id
             JOIN "user" on "user".user_id = budget_category.user_id

@@ -66,7 +66,9 @@ def create_user(user: UserJson):
     """
     with db.engine.connect() as conn:
         inserted_user = conn.execute(
-            sqlalchemy.text('INSERT INTO "user" (name) VALUES (:name) RETURNING user_id'),
+            sqlalchemy.text(
+                'INSERT INTO "user" (name) VALUES (:name) RETURNING user_id'
+            ),
             [{"name": user.name}]
         )
         user_id = inserted_user.fetchone().user_id
