@@ -7,7 +7,7 @@ from src.sql_utils import get_category, get_user
 
 router = APIRouter()
 
-
+# TODO update all these endpoints considering they are now subsets of a the parent table "category"
 @router.get("/users/{user_id}/budget/", tags=["budgets"])
 def get_budget(user_id: int, budget_category_id: int = None):
     """

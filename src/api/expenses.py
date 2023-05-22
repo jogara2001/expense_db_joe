@@ -10,7 +10,7 @@ from src.sql_utils import get_category
 
 router = APIRouter()
 
-
+# TODO update these endpoints considering the sub table "items"
 @router.get("/user/{user_id}/expense/{expense_id}", tags=["expenses"])
 def get_expense(user_id: int, expense_id: int):
     """
